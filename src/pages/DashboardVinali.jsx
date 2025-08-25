@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Typography,
@@ -17,8 +17,19 @@ import { useNavigate } from 'react-router-dom';
 
 const DashboardVinali = () => {
   const navigate = useNavigate();
+  const [nombreUsuario, setNombreUsuario] = useState(''); // nombre dinámico
 
-  const nombreUsuario = 'Valeria';
+  // Obtener nombre del usuario desde localStorage
+  useEffect(() => {
+    const userData = localStorage.getItem('usuario');
+    if (userData) {
+      const user = JSON.parse(userData);
+      setNombreUsuario(user.nombre);
+    } else {
+      navigate('/login'); // redirigir si no hay usuario
+    }
+  }, [navigate]);
+
   const puntos = 520;
   const puntosProximoNivel = 800;
   const progreso = Math.min((puntos / puntosProximoNivel) * 100, 100);
@@ -181,7 +192,14 @@ const DashboardVinali = () => {
       {/* Logout */}
       <Divider sx={{ my: 3 }} />
       <Box textAlign="center">
-        <Button variant="outlined" color="error" onClick={() => navigate('/')}>
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={() => {
+            localStorage.removeItem('usuario');
+            navigate('/login');
+          }}
+        >
           Cerrar sesión
         </Button>
       </Box>
